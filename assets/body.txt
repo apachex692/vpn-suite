@@ -1,0 +1,6 @@
+Hello there, find the config file below for your VPN. This new config will be active till tonight 22:00. Download your respective attachment, open WireGuard application and add the config by clicking the '+' icon at the bottom right corner and choosing 'Import from File or Archive' option. The file browser will pop-up. Choose the file from the config, and load the config. A YouTube video has been attached with this email to explain the same.
+
+YouTube - How to Add Config File to WireGuard: https://youtu.be/UyqIRxf_Ypg?si=mREUwMVdWD1FGA-H
+
+Regards,
+The VPN Company
