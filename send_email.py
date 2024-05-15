@@ -1,3 +1,5 @@
+# Author: Sakthi Santhosh
+# Created on: 15/05/2024
 from csv import DictReader
 from datetime import date
 from email.mime.application import MIMEApplication
@@ -10,7 +12,8 @@ from os import getenv
 
 from dotenv import load_dotenv
 
-CONFIG_TEMPLATE = ENDPOINT_IPV4 = None
+ENDPOINT_DNS_NAME = "vpn.sakthisanthosh.in"
+CONFIG_TEMPLATE = None
 DATE_TODAY = str(date.today())
 
 
@@ -27,7 +30,7 @@ class Recipient:
         recipient_config = CONFIG_TEMPLATE%(
            self.priv_key,
            self.client_ipv4,
-           ENDPOINT_IPV4
+           ENDPOINT_DNS_NAME
         )
 
         return BytesIO(recipient_config.encode("utf-8"))
@@ -42,16 +45,21 @@ def load_config_template() -> str:
         exit(1)
 
 
-def load_recipients_from_csv() -> list[Recipient]:
+def load_recipients() -> list[Recipient]:
     recipients = []
 
     with open("./assets/recipients.csv", newline='') as csvfile:
         reader = DictReader(csvfile)
 
         for row in reader:
+            priv_key = getenv("PYTHONWGES_PRIVKEY_" + row["email"].split('@')[0])
+
+            if priv_key is None:
+                raise TypeError(f"Private key is not set for the peer '{row['email']}'.")
+
             recipient = Recipient(
                 **row,
-                priv_key=getenv("PYTHONWGES_PRIVKEY_" + row["email"].split('@')[0]),
+                priv_key=priv_key,
             )
             recipients.append(recipient)
 
@@ -74,7 +82,7 @@ def send_email(sender_email: str, recipients: list[Recipient], subject: str) -> 
     msg.attach(MIMEText(body, "plain"))
 
     for recipient in recipients:
-        attachment_filename = f"{recipient.email.split('@')[0]}-{DATE_TODAY}.conf"
+        attachment_filename = f"{recipient.email.split('@')[0]}.conf"
         attachment_part = MIMEApplication(
             recipient.config.getvalue(),
             Name=attachment_filename
@@ -100,11 +108,10 @@ def send_email(sender_email: str, recipients: list[Recipient], subject: str) -> 
 if __name__ == "__main__":
     load_dotenv("./assets/.env")
 
-    ENDPOINT_DNS_NAME = "vpn.sakthisanthosh.in"
     CONFIG_TEMPLATE = load_config_template()
 
     send_email(
         "sakthisanthosh010303@gmail.com",
-        load_recipients_from_csv(),
+        load_recipients(),
         "VPN Configuration for " + DATE_TODAY
     )

@@ -1,5 +1,8 @@
 # VPN Suite for Sakthi (Sandy) Santhosh's Website
 
+- **Author:** Sakthi Santhosh
+- **Created on:** 15/05/2024
+
 This repository contains all the necessary scripts to automate the process of maintaining VPN for my website on AWS EC2 instance. To get started, apply the IaC in the [WireGuard Terraform](https://github.com/sakthisanthosh010303/wireguard-terraform-aws) project.
 
 > **Note:** The Terraform script will take care of setting up the WireGuard server on your machine. If you don't use it, you need to set-up the server manually.
